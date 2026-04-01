@@ -1,4 +1,4 @@
-import { Headphones, Globe, Clock } from 'lucide-react';
+import { Globe, Clock } from 'lucide-react';
 import type { Listener } from '@/types';
 import clsx from 'clsx';
 import { formatDistanceToNow } from '@/utils/format';

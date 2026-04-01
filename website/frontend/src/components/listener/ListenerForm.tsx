@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Globe } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface ListenerFormProps {
   onSubmit: (config: ListenerConfig) => void;
