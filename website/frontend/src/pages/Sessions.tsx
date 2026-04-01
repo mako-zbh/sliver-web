@@ -1,71 +1,27 @@
-import { RefreshCw } from 'lucide-react';
 import { useSessionStore } from '@/stores/sessionStore';
-import { formatDistanceToNow } from 'date-fns';
+import { SessionList, SessionTerminal } from '@/components/session';
 
 export default function Sessions() {
-  const { sessions, isLoading, setLoading } = useSessionStore();
-
-  const handleRefresh = () => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 500);
-  };
+  const { sessions, activeSession, setActiveSession } = useSessionStore();
+  const selectedSession = sessions.find(s => s.id === activeSession);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-sliver-text-primary">Sessions</h1>
-        <button 
-          onClick={handleRefresh}
-          className="btn btn-secondary flex items-center gap-2"
-          disabled={isLoading}
-        >
-          <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
-          Refresh
-        </button>
+    <div className="h-full flex gap-4">
+      <div className="w-80 flex-shrink-0">
+        <SessionList
+          sessions={sessions}
+          selectedId={activeSession}
+          onSelect={setActiveSession}
+        />
       </div>
-
-      <div className="card overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-sliver-bg-primary">
-            <tr className="text-left text-sm text-sliver-text-secondary">
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Hostname</th>
-              <th className="px-4 py-3">IP Address</th>
-              <th className="px-4 py-3">Transport</th>
-              <th className="px-4 py-3">User</th>
-              <th className="px-4 py-3">Last Seen</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-sliver-border">
-            {sessions.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-sliver-text-secondary">
-                  No sessions found
-                </td>
-              </tr>
-            ) : (
-              sessions.map((session) => (
-                <tr 
-                  key={session.id} 
-                  className="hover:bg-sliver-bg-primary cursor-pointer transition-colors"
-                >
-                  <td className="px-4 py-3">
-                    <div className={`w-3 h-3 rounded-full ${session.isActive ? 'bg-sliver-success' : 'bg-sliver-warning'}`} />
-                  </td>
-                  <td className="px-4 py-3 text-sm font-medium">{session.name}</td>
-                  <td className="px-4 py-3 text-sm">{session.hostname}</td>
-                  <td className="px-4 py-3 text-sm font-mono">{session.ipAddress}</td>
-                  <td className="px-4 py-3 text-sm">{session.transport}</td>
-                  <td className="px-4 py-3 text-sm">{session.username}</td>
-                  <td className="px-4 py-3 text-sm text-sliver-text-secondary">
-                    {formatDistanceToNow(new Date(session.lastSeen), { addSuffix: true })}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="flex-1">
+        {selectedSession ? (
+          <SessionTerminal session={selectedSession} />
+        ) : (
+          <div className="h-full flex items-center justify-center bg-sliver-bg-secondary rounded-lg border border-sliver-border">
+            <p className="text-sliver-text-secondary">Select a session to interact</p>
+          </div>
+        )}
       </div>
     </div>
   );
